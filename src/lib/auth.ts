@@ -30,6 +30,7 @@ export function deleteUser(userId: string): boolean {
 
 export function loginUser(email: string, password: string): User | null {
   const users = JSON.parse(localStorage.getItem('users') || '[]');
+  console.log("🎈 ~ file: auth.ts:33 ~ loginUser ~ users:", users)
   const user = users.find((u: User) => u.email === email && u.password === password);
   
   if (!user) {

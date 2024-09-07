@@ -61,6 +61,8 @@ export function LoginForm() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const user = loginUser(email, password);
+        console.log("🎈 ~ file: authForms.tsx:64 ~ handleSubmit ~ user:", user)
+        
         if (user) {
             setCurrentUser(user);
             alert('로그인되었습니다.');
