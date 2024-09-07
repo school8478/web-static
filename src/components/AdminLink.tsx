@@ -5,20 +5,20 @@ import { useEffect, useState } from 'react';
 import { getCurrentUser, isAdmin } from '@lib/auth';
 
 export default function AdminLink() {
-  const [showAdminLink, setShowAdminLink] = useState(false);
+    const [showAdminLink, setShowAdminLink] = useState(false);
 
-  useEffect(() => {
-    const currentUser = getCurrentUser();
-    if (currentUser && isAdmin(currentUser.email)) {
-      setShowAdminLink(true);
-    }
-  }, []);
+    useEffect(() => {
+        const currentUser = getCurrentUser();
+        if (currentUser && isAdmin(currentUser.email)) {
+            setShowAdminLink(true);
+        }
+    }, []);
 
-  if (!showAdminLink) return null;
+    if (!showAdminLink) return null;
 
-  return (
-    <Link href="/users" className="text-blue-500 hover:underline">
-      회원 목록
-    </Link>
-  );
+    return (
+        <Link href="/users">
+            회원 목록
+        </Link>
+    );
 }

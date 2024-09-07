@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { AuthStatus } from '@components/AuthForms';
-import AdminLink from '@components/AdminLink';
+import AdminLink from '@components/adminLink';
+import SignDropLink from '@/components/signDropLink';
+import { AuthStatus } from '@components/authForms';
 
 export default function Main() {
   return (
@@ -9,13 +10,14 @@ export default function Main() {
       <AuthStatus />
       
       <div className="mt-4">
-        <Link href="/register" className="mr-4 text-blue-500 hover:underline">
+        <Link href="/sign/up" className="mr-4 text-blue-500 hover:underline">
           회원가입
         </Link>
-        <Link href="/login" className="mr-4 text-blue-500 hover:underline">
+        <Link href="/log" className="mr-4 text-blue-500 hover:underline">
           로그인
         </Link>
         <AdminLink />
+        <SignDropLink />
       </div>
     </main>
   );

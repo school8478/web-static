@@ -1,8 +1,7 @@
 export interface User {
     id: string;
     email: string;
-    role?: string; // role을 선택적 속성으로 변경
-    // 다른 필요한 속성들...
+    role?: string;
 }
 
 export interface AuthResponse {
