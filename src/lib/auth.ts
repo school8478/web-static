@@ -20,7 +20,7 @@ export function deleteUser(userId: string): boolean {
   const updatedUsers = users.filter((user: User) => user.id !== userId);
   
   if (users.length === updatedUsers.length) {
-    return false; // 사용자를 찾지 못함
+    return false;
   }
 
   localStorage.setItem('users', JSON.stringify(updatedUsers));
@@ -30,7 +30,7 @@ export function deleteUser(userId: string): boolean {
 
 export function loginUser(email: string, password: string): User | null {
   const users = JSON.parse(localStorage.getItem('users') || '[]');
-  console.log("🎈 ~ file: auth.ts:33 ~ loginUser ~ users:", users)
+  // console.log("🎈 ~ file: auth.ts:33 ~ loginUser ~ users:", users)
   const user = users.find((u: User) => u.email === email && u.password === password);
   
   if (!user) {

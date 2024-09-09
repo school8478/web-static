@@ -1,10 +1,12 @@
-'use client'
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { User } from '@/types';
 import { getAllUsers } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 import { useAdminCheck } from '@/hooks/useAdminCheck';
+
+import styles from "@css/page.module.css";
 
 const UsersPage: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -31,37 +33,39 @@ const UsersPage: React.FC = () => {
           setLoading(false);
         }
       }
-    }
+    };
 
     if (isAdmin !== null) {
       fetchUsers();
-    }
+    };
   }, [isAdmin, router]);
 
   if (isAdmin === null || loading) {
     return <div>Loading...</div>;
-  }
+  };
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">회원 목록</h1>
-      <table className="w-full border-collapse border border-gray-300">
+    <main className={styles.adminUsers}>
+      <h1>회원 목록</h1>
+      <table>
         <thead>
-          <tr className="bg-gray-100">
-            <th className="border border-gray-300 p-2">ID</th>
-            <th className="border border-gray-300 p-2">이메일</th>
+          <tr>
+            <th>ID</th>
+            <th>이메일</th>
           </tr>
         </thead>
         <tbody>
-          {users.map((user: User) => (
+        {
+          users.map((user: User) => (
             <tr key={user.id}>
-              <td className="border border-gray-300 p-2">{user.id}</td>
-              <td className="border border-gray-300 p-2">{user.email}</td>
+              <td>{user.id}</td>
+              <td>{user.email}</td>
             </tr>
-          ))}
+          ))
+        }
         </tbody>
       </table>
-    </div>
+    </main>
   );
 };
 
