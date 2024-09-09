@@ -9,6 +9,11 @@
       "id": "a91d",
       "email": "admin@example.com",
       "password": "1234"
+    },
+    {
+      "email": "test@dp.co.kr",
+      "password": "1234",
+      "id": "i3ZvRso"
     }
   ],
   "boards": [

@@ -5,12 +5,6 @@ import { User } from '@/types';
 
 const API_URL = 'http://localhost:5000';
 
-export type User = {
-  id: string;
-  email: string;
-  password: string;
-}
-
 export async function signUpUser(email: string, password: string): Promise<User | null> {
   try {
     const checkResponse = await axios.get(`${API_URL}/users?email=${email}`);
