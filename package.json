@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "json-server": "json-server --watch JSONDB.json --port 5000",
+    "dev:all": "concurrently \"npm run dev\" \"npm run json-server\""
   },
   "dependencies": {
     "axios": "^1.7.7",
@@ -19,8 +21,10 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "concurrently": "^8.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.8",
+    "json-server": "^0.17.3",
     "typescript": "^5"
   }
 }
