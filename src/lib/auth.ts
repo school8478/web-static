@@ -1,9 +1,11 @@
 'use client';
+
 import axios from 'axios';
+import { User } from '@/types';
 
-const API_URL = 'http://localhost:9999';
+const API_URL = 'http://localhost:5000';
 
-export interface User {
+export type User = {
   id: string;
   email: string;
   password: string;
@@ -65,13 +67,12 @@ export function getCurrentUser(): User | null {
       try {
         const user = JSON.parse(userString);
         if (user && user.id && user.email) {
-          return user;
+          return user as User; // 타입 단언을 사용하여 User 타입임을 명시
         }
       } catch (error) {
         console.error('Invalid user data in localStorage:', error);
       }
     }
-    // 유효하지 않은 데이터인 경우 로컬 스토리지에서 제거
     localStorage.removeItem('currentUser');
   }
   return null;

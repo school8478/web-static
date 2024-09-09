@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from "next/link";
 import { getCurrentUser, User } from "@/lib/auth";
 import SignDropLink from "@components/signDropLink";
@@ -24,7 +24,6 @@ export default function Header() {
     return () => clearInterval(interval);
   }, []);
 
-  // 로그아웃 이벤트를 감지하는 효과
   useEffect(() => {
     const handleStorageChange = () => {
       setCurrentUser(getCurrentUser());

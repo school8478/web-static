@@ -1,35 +1,33 @@
 'use client';
 
-import axios from 'axios';
-
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { User } from '@/types';
 import { signUpUser, loginUser, logoutUser, deleteUser, setCurrentUser, getCurrentUser } from '@lib/auth';
+import { User } from '@/types';
 import InputField from '@components/field/InputField';
 import ButtonField from '@components/field/buttonField';
 
 export function SignUpForm() {
     const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const router = useRouter();
+    const [password, setPassword] = useState('');
+    const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const user = await signUpUser(email, password);
-      if (user) {
-        alert('회원가입이 완료되었습니다.');
-        router.push('/');
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        alert('회원가입 중 알 수 없는 오류가 발생했습니다.');
-      }
-    }
-  };
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const user = await signUpUser(email, password);
+            if (user) {
+                alert('회원가입이 완료되었습니다.');
+                router.push('/');
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                alert(error.message);
+            } else {
+                alert('회원가입 중 알 수 없는 오류가 발생했습니다.');
+            }
+        }
+    };
 
     return (
         <form onSubmit={handleSubmit}>
