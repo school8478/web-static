@@ -1,0 +1,28 @@
+{
+  "users": [
+    {
+      "id": "c1ee",
+      "email": "test@pdsoft.co",
+      "password": "1234"
+    },
+    {
+      "id": "a91d",
+      "email": "admin@example.com",
+      "password": "1234"
+    }
+  ],
+  "boards": [
+    {
+      "id": "1",
+      "title": "게시글 1",
+      "content": "게시글 1 내용",
+      "createdAt": "2024-05-01T00:00:00Z"
+    },
+    {
+      "id": "2",
+      "title": "게시글 2",
+      "content": "게시글 2 내용",
+      "createdAt": "2024-05-02T00:00:00Z"
+    }
+  ]
+}

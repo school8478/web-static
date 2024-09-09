@@ -5,9 +5,9 @@ import { loginUser } from "@/lib/auth"
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "text" },
+        email: { label: "Email", type: "text", placeholder: "jsmith@example.com" },
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
@@ -15,12 +15,17 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        const user = loginUser(credentials.email, credentials.password)
+        try {
+          const user = await loginUser(credentials.email, credentials.password)  // await 사용
 
-        if (user) {
-          return { id: user.id, email: user.email }
+          if (user) {
+            return { id: user.id, email: user.email }
+          }
+          return null
+        } catch (error) {
+          console.error('Authentication error:', error)
+          return null
         }
-        return null
       }
     })
   ],
