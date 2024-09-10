@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getCurrentUser, isAdmin } from '@lib/auth';
+import { getCurrentUser, isAdmin } from '@/lib/auth';
 
 export default function AdminLink() {
     const [showAdminLink, setShowAdminLink] = useState(false);

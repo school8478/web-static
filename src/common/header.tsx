@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import type { User } from "@/types";
+import { getCurrentUser } from "@/lib/auth";
 import Link from "next/link";
-import { getCurrentUser, User } from "@/lib/auth";
 import SignDropLink from "@components/signDropLink";
 import AdminLink from "@components/adminLink";
 import LogoutLink from "@components/logOutLink";
@@ -36,27 +37,35 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <section className={styles.secHeader}>
-
-      </section>
-      <nav>
-        {!currentUser && (
-          <>
-            <Link href="/sign/up" className="mr-4 text-blue-500 hover:underline">
-              회원가입
-            </Link>
-            <Link href="/log" className="mr-4 text-blue-500 hover:underline">
-              로그인
-            </Link>
-          </>
-        )}
-        {currentUser && (
-          <>
-            <AdminLink />
-            <SignDropLink />
-            <LogoutLink />
-          </>
-        )}
-      </nav>
+        <article>
+          <div className={styles.logo}>로고</div>
+          <nav>
+            {!currentUser && (
+              <>
+                <Link href="/sign/up" className="mr-4 text-blue-500 hover:underline">
+                  회원가입
+                </Link>
+                <Link href="/log" className="mr-4 text-blue-500 hover:underline">
+                  로그인
+                </Link>
+              </>
+            )}
+            {currentUser && (
+              <>
+                <AdminLink />
+                <SignDropLink />
+                <LogoutLink />
+              </>
+            )}
+          </nav>
+        </article>
+        <article>
+          <nav>
+            <Link href="/">홈</Link>
+            <Link href="/board">게시판</Link>
+          </nav>
+        </article>
+      </section>      
     </header>
   );
 }

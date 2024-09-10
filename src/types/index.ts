@@ -1,6 +1,7 @@
 export interface User {
-    id: string;
+    id: number;
     email: string;
+    name?: string;
     password?: string;
 }
 
@@ -17,3 +18,12 @@ export type LoginCredentials = {
 export type RegisterData = LoginCredentials & {
     name: string;
 };
+
+export interface Post {
+    id: number;
+    category: string;
+    title: string;
+    content: string;
+    createdAt: string;
+    author: string;
+}

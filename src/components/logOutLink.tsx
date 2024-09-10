@@ -15,7 +15,7 @@ export default function LogoutLink() {
     };
 
     return (
-        <Link href="/logout" onClick={handleLogout} className="mr-4 text-blue-500 hover:underline">
+        <Link href="/logout" onClick={handleLogout}>
             로그아웃
         </Link>
     );

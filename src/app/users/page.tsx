@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { User } from '@/types';
+import type { User } from '@/types';
 import { getAllUsers, getCurrentUser, isAdmin } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 

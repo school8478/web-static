@@ -1,36 +1,53 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { signUpUser, loginUser, logoutUser, deleteUser, setCurrentUser, getCurrentUser } from '@lib/auth';
-import { User } from '@/types';
-import InputField from '@components/field/InputField';
+import InputField from '@components/field/inputField';
 import ButtonField from '@components/field/buttonField';
 
 export function SignUpForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [name, setName] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
         try {
-            const user = await signUpUser(email, password);
-            if (user) {
+            const response = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password, name }),
+            });
+            const data = await response.json();
+            if (response.ok) {
                 alert('회원가입이 완료되었습니다.');
-                router.push('/');
+                router.push('/login');
+            } else {
+                alert(data.error || '회원가입 중 오류가 발생했습니다.');
             }
         } catch (error) {
-            if (error instanceof Error) {
-                alert(error.message);
-            } else {
-                alert('회원가입 중 알 수 없는 오류가 발생했습니다.');
-            }
+            console.error('회원가입 오류:', error);
+            alert('회원가입 중 오류가 발생했습니다.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
         <form onSubmit={handleSubmit}>
+            <InputField
+                type="text"
+                name="inp-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="이름"
+                className="inp-basic"
+                required
+            />
             <InputField
                 type="email"
                 name="inp-email"
@@ -49,7 +66,9 @@ export function SignUpForm() {
                 className="inp-basic"
                 required
             />
-            <ButtonField type="submit" className="btn-basic">회원가입</ButtonField>
+            <ButtonField type="submit" className="btn-basic" disabled={isLoading}>
+                {isLoading ? '처리 중...' : '회원가입'}
+            </ButtonField>
         </form>
     );
 }
@@ -57,22 +76,31 @@ export function SignUpForm() {
 export function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
         try {
-            const user = await loginUser(email, password);
-            if (user) {
-                setCurrentUser(user);
+            const result = await signIn('credentials', {
+                redirect: false,
+                email,
+                password,
+            });
+
+            if (result?.error) {
+                alert(result.error);
+            } else {
                 alert('로그인되었습니다.');
                 router.push('/');
-            } else {
-                alert('이메일 또는 비밀번호가 올바르지 않습니다.');
+                router.refresh();
             }
         } catch (error) {
             console.error('로그인 오류:', error);
             alert('로그인 중 오류가 발생했습니다.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -96,44 +124,61 @@ export function LoginForm() {
                 className="inp-password"
                 required
             />
-            <ButtonField type="submit" className="btn-basic">로그인</ButtonField>
+            <ButtonField type="submit" className="btn-basic" disabled={isLoading}>
+                {isLoading ? '처리 중...' : '로그인'}
+            </ButtonField>
         </form>
     );
 }
 
 export function LogoutForm() {
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-    const handleLogout = () => {
-        logoutUser();
-        alert('로그아웃되었습니다.');
-        router.push('/');
+    const handleLogout = async () => {
+        setIsLoading(true);
+        try {
+            await signOut({ redirect: false });
+            alert('로그아웃되었습니다.');
+            router.push('/');
+            router.refresh();
+        } catch (error) {
+            console.error('로그아웃 오류:', error);
+            alert('로그아웃 중 오류가 발생했습니다.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    return <ButtonField type="button" className="btn-basic" onClick={handleLogout}>로그아웃</ButtonField>;
+    return (
+        <ButtonField 
+            type="button" 
+            className="btn-basic" 
+            onClick={handleLogout}
+            disabled={isLoading}
+        >
+            {isLoading ? '처리 중...' : '로그아웃'}
+        </ButtonField>
+    );
 }
 
 export function AuthStatus() {
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-    useEffect(() => {
-        setCurrentUser(getCurrentUser());
-    }, []);
+    const { data: session } = useSession();
 
     return (
-    <div>
-    {currentUser ? `${currentUser.email}님 환영합니다.` : '로그인되지 않았습니다.'}
-    </div>
+        <div>
+            {session?.user ? `${session.user.email}님 환영합니다.` : '로그인되지 않았습니다.'}
+        </div>
     );
 }
 
 export function SignDropForm() {
+    const { data: session } = useSession();
     const router = useRouter();
     const [isDeleting, setIsDeleting] = useState(false);
 
     const handleDeleteAccount = async () => {
-        const currentUser = getCurrentUser();
-        if (!currentUser || !currentUser.id) {
+        if (!session?.user?.id) {
             alert('로그인 상태를 확인할 수 없습니다.');
             return;
         }
@@ -146,13 +191,19 @@ export function SignDropForm() {
         setIsDeleting(true);
 
         try {
-            const success = await deleteUser(currentUser.id);
-            if (success) {
+            const response = await fetch('/api/auth/delete-account', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: session.user.id }),
+            });
+            const data = await response.json();
+            if (response.ok) {
                 alert('회원탈퇴가 완료되었습니다.');
-                logoutUser();
+                await signOut({ redirect: false });
                 router.push('/');
+                router.refresh();
             } else {
-                alert('회원탈퇴에 실패했습니다. 다시 시도해 주세요.');
+                alert(data.error || '회원탈퇴에 실패했습니다. 다시 시도해 주세요.');
             }
         } catch (error) {
             console.error('회원탈퇴 오류:', error);

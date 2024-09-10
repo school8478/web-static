@@ -1,18 +1,18 @@
 'use client'
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { getCurrentUser } from '@lib/auth';
+import { useSession } from 'next-auth/react';
 
 export default function SignDropLink() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { data: session, status } = useSession();
 
-  useEffect(() => {
-    const user = getCurrentUser();
-    setIsLoggedIn(!!user);
-  }, []);
+  if (status === 'loading') {
+    return null; // 또는 로딩 인디케이터를 표시할 수 있습니다.
+  }
 
-  if (!isLoggedIn) return null;
+  if (status !== 'authenticated') {
+    return null;
+  }
 
   return (
     <Link href="/sign/drop">

@@ -1,9 +1,31 @@
-'use client';
-
 import axios from 'axios';
-import { User } from '@/types';
+import type { User } from "@/types";
 
-const API_URL = 'http://localhost:5000';
+const API_URL = process.env.API_URL || 'http://localhost:5000';
+
+export async function getUsers(): Promise<User[]> {
+  const response = await fetch(`${API_URL}/users`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch users');
+  }
+  const users: User[] = await response.json();
+  return users.map((user) => ({
+    ...user,
+    id: Number(user.id)
+  }));
+}
+
+export async function getUser(id: number): Promise<User> {
+  const response = await fetch(`${API_URL}/users/${id}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch user');
+  }
+  const user = await response.json();
+  return {
+    ...user,
+    id: Number(user.id)
+  };
+}
 
 export async function signUpUser(email: string, password: string): Promise<User | null> {
   try {
@@ -13,7 +35,11 @@ export async function signUpUser(email: string, password: string): Promise<User 
     }
 
     const response = await axios.post(`${API_URL}/users`, { email, password });
-    return response.data;
+    const newUser = response.data;
+    return {
+      ...newUser,
+      id: Number(newUser.id)
+    };
   } catch (error) {
     if (axios.isAxiosError(error)) {
       console.error('Sign up error:', error.response?.data);
@@ -23,9 +49,9 @@ export async function signUpUser(email: string, password: string): Promise<User 
   }
 }
 
-export async function deleteUser(userId: string): Promise<boolean> {
+export async function deleteUser(id: number): Promise<boolean> {
   try {
-    await axios.delete(`${API_URL}/users/${userId}`);
+    await axios.delete(`${API_URL}/users/${id}`);
     return true;
   } catch (error) {
     console.error('회원탈퇴 오류:', error);
@@ -37,7 +63,11 @@ export async function loginUser(email: string, password: string): Promise<User |
   try {
     const response = await axios.get(`${API_URL}/users?email=${email}&password=${password}`);
     if (response.data.length > 0) {
-      return response.data[0];
+      const user = response.data[0];
+      return {
+        ...user,
+        id: Number(user.id)
+      };
     }
     return null;
   } catch (error) {
@@ -51,7 +81,10 @@ export function logoutUser(): void {
 }
 
 export function setCurrentUser(user: User): void {
-  localStorage.setItem('currentUser', JSON.stringify(user));
+  localStorage.setItem('currentUser', JSON.stringify({
+    ...user,
+    id: Number(user.id)
+  }));
 }
 
 export function getCurrentUser(): User | null {
@@ -61,7 +94,10 @@ export function getCurrentUser(): User | null {
       try {
         const user = JSON.parse(userString);
         if (user && user.id && user.email) {
-          return user as User; // 타입 단언을 사용하여 User 타입임을 명시
+          return {
+            ...user,
+            id: Number(user.id)
+          };
         }
       } catch (error) {
         console.error('Invalid user data in localStorage:', error);
@@ -74,8 +110,11 @@ export function getCurrentUser(): User | null {
 
 export async function getAllUsers(): Promise<User[]> {
   try {
-    const response = await axios.get(`${API_URL}/users`);
-    return response.data;
+    const response = await axios.get<User[]>(`${API_URL}/users`);
+    return response.data.map((user) => ({
+      ...user,
+      id: Number(user.id)
+    }));
   } catch (error) {
     console.error('사용자 목록 조회 오류:', error);
     throw error;
@@ -83,6 +122,5 @@ export async function getAllUsers(): Promise<User[]> {
 }
 
 export function isAdmin(email: string): boolean {
-  // 여기서는 간단히 특정 이메일을 관리자로 지정합니다
   return email === 'admin@example.com';
 }
