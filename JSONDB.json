@@ -2,11 +2,6 @@
   "users": [
     {
       "id": "1",
-      "email": "test@pdsoft.co",
-      "password": "1234"
-    },
-    {
-      "id": "2",
       "email": "admin@example.com",
       "password": "1234"
     }
@@ -29,12 +24,12 @@
       "author": "익명 사용자"
     },
     {
-      "id": "2554",
+      "id": "9b3b",
       "category": "notice",
-      "title": "test",
-      "content": "1234",
+      "title": "테스트",
+      "content": "yrdy",
       "author": "익명 사용자",
-      "createdAt": "2024-09-10T05:51:44.096Z"
+      "createdAt": "2024-09-10T08:05:22.456Z"
     }
   ]
 }

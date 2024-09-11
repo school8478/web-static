@@ -61,9 +61,10 @@ export async function deleteUser(id: number): Promise<boolean> {
 
 export async function loginUser(email: string, password: string): Promise<User | null> {
   try {
-    const response = await axios.get(`${API_URL}/users?email=${email}&password=${password}`);
-    if (response.data.length > 0) {
-      const user = response.data[0];
+    const response = await axios.get(`${API_URL}/users?email=${email}`);
+    const users = response.data;
+    const user = users.find((u: User) => u.email === email && u.password === password);
+    if (user) {
       return {
         ...user,
         id: Number(user.id)

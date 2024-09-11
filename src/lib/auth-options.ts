@@ -1,6 +1,6 @@
 import type { NextAuthOptions } from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials";
-import { loginUser } from "@/lib/auth";
+import CredentialsProvider from "next-auth/providers/credentials"
+import { loginUser } from "@/lib/auth"
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -10,39 +10,39 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials): Promise<any> {
+      async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null;
+          return null
         }
-        const user = await loginUser(credentials.email, credentials.password);
+        const user = await loginUser(credentials.email, credentials.password)
         if (user) {
-          return {
-            ...user,
-            id: user.id.toString()
-          };
+          return { id: user.id.toString(), email: user.email }
         }
-        return null;
+        return null
       }
     })
   ],
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    jwt: ({ token, user }) => {
+    async jwt({ token, user }) {
       if (user) {
-        token.id = Number(user.id);
+        token.id = user.id
+        token.email = user.email
       }
-      return token;
+      return token
     },
-    session: ({ session, token }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: token.sub,
-      },
-    }),
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as number
+        session.user.email = token.email as string
+      }
+      return session
+    }
   },
   pages: {
-    signIn: "/login",
+    signIn: '/log',
   },
-  secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
+  debug: process.env.NODE_ENV === 'development',
 }
